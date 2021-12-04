@@ -37,7 +37,127 @@ public class TreeItemBase :MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public static ItemEventHandler OnExpand;
     public static ItemEventHandler OnFold;
 
-   
+    public int indent;
+
+    private List<TreeItemBase> childs = new List<TreeItemBase>();
+    public List<TreeItemBase> Childs
+    {
+        get {
+            return childs;
+        }
+    }
+
+    private TreeItemBase parent;
+    public TreeItemBase Parent
+    {
+        get
+        {
+            return parent;
+        }
+        set
+        {
+            parent = value;
+
+            if (parent == null)
+            {
+                Debug.LogError("没有父物体");
+                indent = 0;
+            }
+            else
+            {
+                indent = parent.indent + 40;
+
+            }
+            RectOffset rectOffset = new RectOffset(indent, 0, 0, 0);
+
+            GetComponentInChildren<HorizontalLayoutGroup>().padding = rectOffset;
+
+        }
+    }
+
+
+    private bool isExpand;//是否是展开状态
+
+    public bool IsExpand
+    {
+        get
+        {
+            return isExpand;
+        }
+        set
+        {
+            
+            isExpand = value;
+
+            if (isExpand)
+            {
+                Expand();
+            }
+            else
+            {
+                Fold();
+            }
+        }
+    }
+
+
+    private bool hasChild;
+
+    public bool HasChild
+    {
+        get
+        {
+            return hasChild;
+        }
+        set
+        {
+            hasChild = value;
+
+            if (hasChild)
+            {
+                Fold();
+                
+            }
+            else
+            {
+                NotHasChild();
+            }
+
+        }
+    }
+    public int siblingIndex => transform.GetSiblingIndex();//标记当前的索引
+
+
+
+    public virtual void InitData(string showContent) { 
+    
+    }
+    public void AddChild(TreeItemBase treeItemBase)
+    {
+        if (!childs.Contains(treeItemBase))
+        {
+            childs.Add(treeItemBase);
+     
+        }
+        else
+        {
+            Debug.LogError("已经包含该子节点，不应该出现这种情况");
+        }
+    }
+
+    public void RemoveChild(TreeItemBase treeItemBase)
+    {
+
+        if (childs.Contains(treeItemBase))
+        {
+            childs.Remove(treeItemBase);
+        }
+        else
+        {
+            Debug.LogError("里面没有包含这个节点，不应该出现这种情况");
+        }
+
+    }
     /// <summary>
     /// 关联的数据
     /// </summary>
@@ -46,6 +166,21 @@ public class TreeItemBase :MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         get;
         set;
     }
+
+    public virtual void Expand() { 
+    
+
+    }
+
+    public virtual void Fold() {
+       
+    }
+
+    public virtual void  NotHasChild() { 
+    
+    }
+
+  
     public void OnPointerDown(PointerEventData eventData)
     {
         if (PointerDown != null)

@@ -5,20 +5,20 @@ using UnityEngine;
 
 public class ViewTreeDemo : MonoBehaviour
 {
-    ViewTreeController treeController;
+    SceneGameobjectTree treeController;
     private void Awake()
     {
-        treeController = GetComponent<ViewTreeController>();
+        treeController = GetComponent<SceneGameobjectTree>();
     }
     private void OnEnable()
     {
-        treeController.itemExpandingArgs += OnItemExpand;
-        treeController.itemBindDataArgs += OnBindDataArgs;
+        //treeController.itemExpandingArgs += OnItemExpand;
+        //treeController.itemBindDataArgs += OnBindDataArgs;
     }
     private void OnDisable()
     {
-        treeController.itemExpandingArgs -= OnItemExpand;
-        treeController.itemBindDataArgs -= OnBindDataArgs;
+        //treeController.itemExpandingArgs -= OnItemExpand;
+        //treeController.itemBindDataArgs -= OnBindDataArgs;
     }
 
     private void OnBindDataArgs(object sender, ItemBindDataArgs e)
@@ -30,7 +30,7 @@ public class ViewTreeDemo : MonoBehaviour
 
     private void OnItemExpand(object sender, ItemExpandingArgs e)
     {
-        Debug.LogError("收到了展开");
+  
         GameObject gameObject = e.Item as GameObject;
         GameObject[] childObj = new GameObject[gameObject.transform.childCount];
 
