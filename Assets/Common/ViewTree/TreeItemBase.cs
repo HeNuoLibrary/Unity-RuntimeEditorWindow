@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,17 +9,9 @@ using UnityEngine.UI;
 public delegate void ItemEventHandler(TreeItemBase sender, PointerEventData eventData);
 
 
-/// <summary>
-/// 停留的位置
-/// </summary>
-public enum DropSibling { 
-    None,//停留在非操作区域
-    Child,//停留目标的子节点
-    PrevSibling,//目停留标的上面
-    NextSibling,//停留目标的下面
-}
 
-public class TreeItemBase :MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IDropHandler, IEndDragHandler
+
+public class TreeItemBase : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler, IBeginDragHandler, IDragHandler, IDropHandler, IEndDragHandler
 {
     //
     public static event EventHandler Selected;
@@ -36,10 +29,48 @@ public class TreeItemBase :MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     public static ItemEventHandler OnExpand;
     public static ItemEventHandler OnFold;
+    public int indent => GetComponentInChildren<HorizontalLayoutGroup>().padding.left;
 
-    public int indent;
+    private bool isSelected;
+    public bool IsSelected
+    {
+        get {
+            return isSelected;
+        }
+        set {
 
-    private List<TreeItemBase> childs = new List<TreeItemBase>();
+            if (value)
+            {
+                Selected?.Invoke(this, null);
+                SelectedItem();
+            }
+            else {
+                if (isSelected) { 
+                    UnSelected?.Invoke(this, null);
+
+                    UnSelectedItem();
+                }
+            }
+            isSelected = value;
+        }
+    }
+
+
+
+    private bool isInitData;//标记是否已经初始化数据
+    public bool IsInitData {
+        get {
+
+            return isInitData;
+
+        }
+        set {
+            isInitData = value;
+        }
+    }
+
+
+    public List<TreeItemBase> childs = new List<TreeItemBase>();
     public List<TreeItemBase> Childs
     {
         get {
@@ -58,20 +89,28 @@ public class TreeItemBase :MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             parent = value;
 
-            if (parent == null)
+           
+        }
+    }
+    private bool canExpand;//标记当前节点是否能够展开
+    public bool CanExpand
+    {
+        get
+        {
+            return canExpand;
+        }
+        set
+        {
+            canExpand = value;
+            if (canExpand)
             {
-                Debug.LogError("没有父物体");
-                indent = 0;
+                Fold();
+
             }
             else
             {
-                indent = parent.indent + 40;
-
+                NotHasChild();
             }
-            RectOffset rectOffset = new RectOffset(indent, 0, 0, 0);
-
-            GetComponentInChildren<HorizontalLayoutGroup>().padding = rectOffset;
-
         }
     }
 
@@ -86,7 +125,7 @@ public class TreeItemBase :MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
         set
         {
-            
+
             isExpand = value;
 
             if (isExpand)
@@ -100,87 +139,8 @@ public class TreeItemBase :MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 
+    #region  Unity 方法
 
-    private bool hasChild;
-
-    public bool HasChild
-    {
-        get
-        {
-            return hasChild;
-        }
-        set
-        {
-            hasChild = value;
-
-            if (hasChild)
-            {
-                Fold();
-                
-            }
-            else
-            {
-                NotHasChild();
-            }
-
-        }
-    }
-    public int siblingIndex => transform.GetSiblingIndex();//标记当前的索引
-
-
-
-    public virtual void InitData(string showContent) { 
-    
-    }
-    public void AddChild(TreeItemBase treeItemBase)
-    {
-        if (!childs.Contains(treeItemBase))
-        {
-            childs.Add(treeItemBase);
-     
-        }
-        else
-        {
-            Debug.LogError("已经包含该子节点，不应该出现这种情况");
-        }
-    }
-
-    public void RemoveChild(TreeItemBase treeItemBase)
-    {
-
-        if (childs.Contains(treeItemBase))
-        {
-            childs.Remove(treeItemBase);
-        }
-        else
-        {
-            Debug.LogError("里面没有包含这个节点，不应该出现这种情况");
-        }
-
-    }
-    /// <summary>
-    /// 关联的数据
-    /// </summary>
-    public object ItemObj
-    {
-        get;
-        set;
-    }
-
-    public virtual void Expand() { 
-    
-
-    }
-
-    public virtual void Fold() {
-       
-    }
-
-    public virtual void  NotHasChild() { 
-    
-    }
-
-  
     public void OnPointerDown(PointerEventData eventData)
     {
         if (PointerDown != null)
@@ -197,7 +157,8 @@ public class TreeItemBase :MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                 DoubleClick(this, eventData);
             }
         }
-        else {
+        else
+        {
             if (PointerUp != null)
             {
                 PointerUp(this, eventData);
@@ -252,10 +213,151 @@ public class TreeItemBase :MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 
-    public virtual void ResetState()
+    #endregion
+    
+  
+	
+	public virtual void InitData(string showContent) { 
+    
+    }
+
+    public int IndexOf(TreeItemBase treeItemBase) {
+        if (childs.Contains(treeItemBase))
+        {
+            return childs.IndexOf(treeItemBase);
+        }
+        else
+        {
+            Debug.LogError("没有包含该子节点，不应该出现这种情况");
+            return 0;
+
+        }
+
+    }
+
+    public bool IsContain(TreeItemBase treeItemBase) {
+
+		foreach (var item in Childs)
+		{
+            if (item == treeItemBase)
+            {
+                return true;
+            }
+            else {
+               return item.IsContain(treeItemBase);
+            }
+		}
+
+        return false;
+
+    }
+    /// <summary>
+    /// 查找最后一个节点
+    /// </summary>
+    /// <param name="treeItemBase"></param>
+    /// <returns></returns>
+    public TreeItemBase FindLastNode(TreeItemBase treeItemBase) {
+
+        // Debug.LogError("查找到的节点==" + (treeItemBase.ItemObj as GameObject).name);
+
+        if (treeItemBase.Childs.Count > 0)
+        {
+            return FindLastNode(treeItemBase.Childs[treeItemBase.Childs.Count - 1]);
+
+        }
+        else {
+            return treeItemBase;
+        }
+    }
+
+    /// <summary>
+    /// 更新子节点的位置
+    /// </summary>
+    /// <param name="treeItemBase"></param>
+    public void UpdateChildRectOffset(TreeItemBase treeItemBase)
     {
-        
+        int index = IndexOf(treeItemBase);
+        RectOffset rectOffset = new RectOffset(treeItemBase.Parent.indent + 30, 0, 0, 0);
+        treeItemBase.GetComponentInChildren<HorizontalLayoutGroup>().padding = rectOffset;
+       
+        treeItemBase.gameObject.SetActive(true);
+    }
+
+    public void AddChild(int siblingIndex, TreeItemBase treeItemBase)
+    {
+        if (!childs.Contains(treeItemBase))
+        {
+            treeItemBase.Parent = this;
+            treeItemBase.transform.SetAsLastSibling();
+            
+            TreeItemBase lastTree = FindLastNode(this);
+            int index = lastTree.transform.GetSiblingIndex();
+            //将节点放置在最后一个节点
+            treeItemBase.transform.SetSiblingIndex(index + 1);
+            childs.Insert(siblingIndex, treeItemBase);
+        }
+        else
+        {
+            Debug.LogError("已经包含该子节点，不应该出现这种情况");
+        }
+    }
+
+    /// <summary>
+    /// 移除一个节点
+    /// </summary>
+    /// <param name="treeItemBase"></param>
+    public void RemoveChild(TreeItemBase treeItemBase)
+    {
+
+        if (childs.Contains(treeItemBase))
+        {
+            childs.Remove(treeItemBase);
+            if (childs.Count==0) {
+                IsExpand = false;
+                CanExpand = false;
+            }
+        }
+        else
+        {
+            Debug.LogError("里面没有包含这个节点，不应该出现这种情况");
+        }
+
+    }
+    /// <summary>
+    /// 关联的数据
+    /// </summary>
+    public object ItemObj
+    {
+        get;
+        set;
+    }
+
+
+    public virtual void Expand() { 
+
+
+    }
+
+    public virtual void Fold() {
        
     }
+
+    public virtual void  NotHasChild() {
+       
+    }
+
+    public virtual void SelectedItem()
+    {
+
+    }
+
+          public virtual void UnSelectedItem()
+    {
+
+    }
+
+
+
+
 
 }

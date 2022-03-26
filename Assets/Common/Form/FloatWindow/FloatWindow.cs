@@ -226,24 +226,24 @@ public class FloatWindow : MonoBehaviour,IPointerEnterHandler,IPointerExitHandle
 			float bottomDis = Input.mousePosition.y - corners[0].y;
 
 
-			if (Vector3.Distance(Input.mousePosition, corners[0]) < detectionDis)
+			if (Vector2.Distance(Input.mousePosition, corners[0]) < detectionDis)
 			{
 				dragDir = DragDirection.LeftBottom;
 				
 			}else
-			if (Vector3.Distance(Input.mousePosition, corners[1]) < detectionDis)
+			if (Vector2.Distance(Input.mousePosition, corners[1]) < detectionDis)
 			{
 				dragDir = DragDirection.LeftTop;
 				
 			}
 			else
-			if (Vector3.Distance(Input.mousePosition, corners[2]) < detectionDis)
+			if (Vector2.Distance(Input.mousePosition, corners[2]) < detectionDis)
 			{
 				dragDir = DragDirection.RightTop;
 			}
 			else
 
-			if (Vector3.Distance(Input.mousePosition, corners[3]) < detectionDis)
+			if (Vector2.Distance(Input.mousePosition, corners[3]) < detectionDis)
 			{
 				dragDir = DragDirection.RightBottom;
 			}

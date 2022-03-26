@@ -60,9 +60,6 @@ public class Lable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHan
 
     }
 
-   
-
-   
 
     /// <summary>
     /// 设置当前标签的 现实状态
@@ -107,6 +104,7 @@ public class Lable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHan
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+
         //判断能否拖动
         canDrag = CanInteraction;
        

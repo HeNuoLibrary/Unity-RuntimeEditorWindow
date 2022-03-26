@@ -1,6 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+/// <summary>
+/// 停留的位置
+/// </summary>
+public enum DropSibling
+{
+    None,//停留在非操作区域
+    Child,//停留目标的子节点
+    PrevSibling,//目停留标的上面
+    NextSibling,//停留目标的下面
+}
 
 /// <summary>
 /// 处理拖动Item的时候显示的遮罩
@@ -12,6 +22,8 @@ public class MaskItem : MonoBehaviour
     private CanvasGroup canvasGroup;
     private RectTransform line;
     private RectTransform frame;
+
+    public DropSibling dropSibling { get; private set; }
 
 
     private void Awake()
@@ -26,15 +38,17 @@ public class MaskItem : MonoBehaviour
     public void SetDropItemBase(TreeItemBase itemBase) {
         
         this.dropItemBase = itemBase;
-        if (dropItemBase != null)
-        {
-            canvasGroup.alpha = 1;
-        }
-        else { 
-            canvasGroup.alpha = 0;
+		if (dropItemBase != null)
+		{
+			canvasGroup.alpha = 1;
+		}
+		else
+		{
+			dropSibling = DropSibling.None;
+			canvasGroup.alpha = 0;
 
-        }
-    }
+		}
+	}
 
     public void SetPoistion(Vector2 mousePos) {
         if (dropItemBase != null)
@@ -43,25 +57,27 @@ public class MaskItem : MonoBehaviour
             Vector2 pos = rectTransform.GetScreenPointToLocalPointInRectangle(mousePos, UIManager.Instance.UICanvas);
             transform.position = dropItemBase.transform.position;
 
-            float height = 20;
+            float height = rectTransform.rect.height/2-5;
             if (pos.y > height)
             {
-
-                SetDropSibling(DropSibling.PrevSibling);
+                dropSibling = DropSibling.PrevSibling;
+               
             }
             else {
                 if (-pos.y > height)
                 {
-                    SetDropSibling(DropSibling.NextSibling);
+                    dropSibling = DropSibling.NextSibling;
+
                 }
                 else
                 {
-                    SetDropSibling(DropSibling.Child);
+                    dropSibling = DropSibling.Child;
+
 
                 }
             }
 
-            
+            SetDropSibling(dropSibling);
         }
        
     }
@@ -76,22 +92,21 @@ public class MaskItem : MonoBehaviour
             case DropSibling.None:
                 break;
             case DropSibling.Child:
-                Debug.LogError("中间");
+              
                 frame.gameObject.SetActive(true);
                 break;
             case DropSibling.PrevSibling:
-                Debug.LogError("上面");
-
+               
                 line.gameObject.SetActive(true);
                
-                 line.localPosition = Vector3.up*30;
+                 line.localPosition = Vector3.up*18;
 
                 break;
             case DropSibling.NextSibling:
-                Debug.LogError("下面");
+               
                 line.gameObject.SetActive(true);
 
-                line.localPosition = -Vector3.up * 30;
+                line.localPosition = -Vector3.up * 18;
 
 
                 break;

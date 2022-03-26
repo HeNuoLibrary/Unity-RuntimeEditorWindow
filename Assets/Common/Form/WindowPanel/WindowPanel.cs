@@ -418,19 +418,19 @@ public class WindowPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 	internal void SetContent(Lable lable)
 	{
 		RectTransform panelContent = lable.content;
-		if (panelContent == null) { 
-		 panelContent = WindowPanelManager.Instance.GetContentByLableName(lable.lableName);
+		if (panelContent == null) {
+			panelContent = WindowPanelManager.Instance.GetContentByLableName(lable.lableName);
+			lable.content = panelContent;
 		}
-
+		
 
 		panelTitle.lableRect.HightLable(lable);
 
-		
 
-		for (int i = contentRect.childCount - 1; i >= 0; i--)
-		{
-			Destroy(contentRect.GetChild(i).gameObject);
-		}
+		//for (int i = contentRect.childCount - 1; i >= 0; i--)
+		//{
+		//	Destroy(contentRect.GetChild(i).gameObject);
+		//}
 
 		panelContent.SetParent(contentRect);
 		panelContent.gameObject.SetActive(true);

@@ -86,7 +86,7 @@ public class Node : MonoBehaviour
 
     private void Start()
     {
-		this.name = gameObject.GetInstanceID().ToString();
+		
     }
     public NodeData ToNodeData() {
 		NodeData nodeData = new NodeData();

@@ -185,10 +185,12 @@ public static class UIUtil
 	/// 强制刷新UI
 	/// </summary>
 	/// <param name="rectTransform"></param>
-	public static void ForceRebuildLayoutImmediate(this RectTransform rectTransform)
+	public static IEnumerator ForceRebuildLayoutImmediate(this RectTransform rectTransform)
 	{
-
+		yield return new WaitForEndOfFrame();
 		UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
+
+
 	}
 
 
