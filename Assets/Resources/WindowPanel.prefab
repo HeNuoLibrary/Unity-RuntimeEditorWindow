@@ -28,7 +28,6 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6078841249998029617}
   m_RootOrder: 0
@@ -104,7 +103,6 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6078841249755873089}
   m_RootOrder: 0
@@ -181,7 +179,6 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6078841248627618711}
   - {fileID: 6078841249832144827}
@@ -275,7 +272,6 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6078841249755873089}
   m_RootOrder: 1
@@ -389,7 +385,6 @@ GameObject:
   - component: {fileID: 6078841249998029622}
   - component: {fileID: 6078841249998029620}
   - component: {fileID: -5525309779892465038}
-  - component: {fileID: -7406389512130049063}
   m_Layer: 5
   m_Name: WindowPanel
   m_TagString: Untagged
@@ -407,7 +402,6 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2849091831723298399}
   - {fileID: 6078841249755873089}
@@ -483,20 +477,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c748375aefb19da47ae1ca1dd16f9fbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-7406389512130049063
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6078841249998029616}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a30f468cfa7ce9b4f982e517d4389dac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isFloatWindow: 0
-  isPanel: 1
 --- !u!1 &6078841250288640178
 GameObject:
   m_ObjectHideFlags: 0
@@ -525,7 +505,6 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6078841249998029617}
   m_RootOrder: 2

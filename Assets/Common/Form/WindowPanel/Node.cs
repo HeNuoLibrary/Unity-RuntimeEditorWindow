@@ -122,11 +122,11 @@ public class Node : MonoBehaviour
 		return nodeData;
 	}
 
-	public  void  SetData(NodeData nodeData) {
-	
-		rectTransform.SetParent( GameObject.Find(nodeData.path).transform);
+	public void SetData(NodeData nodeData) {
 
-		rectTransform.SetRectTransformSizeWithCurrentAnchors(nodeData.width,nodeData.height);
+		rectTransform.SetParent(GameObject.Find(nodeData.path).transform);
+
+		rectTransform.SetRectTransformSizeWithCurrentAnchors(nodeData.width, nodeData.height);
 		rectTransform.localPosition = MathUtil.GetVector3(nodeData.localPosition);
 		rectTransform.localRotation = MathUtil.GetQuaterion(nodeData.localRotation);
 		rectTransform.localScale = MathUtil.GetVector3(nodeData.localScale);
@@ -139,8 +139,10 @@ public class Node : MonoBehaviour
 
 		this.isFloatWindow = nodeData.isFloatWindow;
 		this.isPanel = nodeData.isPanel;
-		
+
 		direction = nodeData.direction;
+
+		
 	}
 
 	public void UpdateRectransform()

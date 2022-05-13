@@ -84,13 +84,17 @@ public class FloatWindow : MonoBehaviour,IPointerEnterHandler,IPointerExitHandle
 		canvas = FindObjectOfType<Canvas>();
 		this.name = "FloatWindow" + transform.GetSiblingIndex();
 		rectTransform = GetComponent<RectTransform>();
+		
 
 		transform.Find("TitleArea/Close").GetComponent<Button>().onClick.AddListener(()=> {
 			Destroy(gameObject);
 		});
+		transform.Find("TitleArea/Close").parent.SetAsLastSibling();
+
 	}
 	void Update()
 	{
+		
 		if (Input.GetMouseButtonDown(0))
 		{
 			
