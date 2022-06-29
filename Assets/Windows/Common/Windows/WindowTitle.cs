@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System;
 
 public class WindowTitle : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDragHandler
 {
@@ -13,16 +14,19 @@ public class WindowTitle : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDrag
     private void Awake()
     {
 
-       
+      
+
 
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (!WindowsDrag.IsDraging) {
-           
             max.GetComponent<Image>().sprite = Resources.Load<Sprite>("Title/2");
             WindowsTools.DragWindow();
+            WindowsToolsOver.isMax = false;
+
+            Debug.LogError("拖动");
 
         }
     }
@@ -38,7 +42,9 @@ public class WindowTitle : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDrag
 
     public void OnEndDrag(PointerEventData eventData)
     {
-       
+        WindowsToolsOver.DragEnd();
+
+
     }
 
    
@@ -71,7 +77,10 @@ public class WindowTitle : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDrag
         });
         
         min.onClick.AddListener(() => {
-            WindowsTools.SetMinWindows();
+
+            WindowsToolsOver.MinWindows();
+            Debug.LogError("最小化");
+
 
         });
 
@@ -86,16 +95,20 @@ public class WindowTitle : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDrag
     public  void FullScreen()
     {
 
-        if (WindowsTools.IsMax)
+        if (WindowsToolsOver.isMax)
         {
              Debug.LogError("还原");
-           
-            WindowsTools.SetNormalWindow();
+
+            WindowsToolsOver.Normal();
+
+           // WindowsTools.SetNormalWindow();
         }
         else
         {
             Debug.LogError("最大化");
-            WindowsTools.SetMaxWindows();
+           // WindowsTools.SetMaxWindows();
+            WindowsToolsOver.MaxWindows();
+
         }
 
         SetIcom();
@@ -103,8 +116,14 @@ public class WindowTitle : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDrag
 
     }
 
+    
+
+    
+
+    
+
     private void SetIcom() {
-        if (WindowsTools.IsMax)
+        if (WindowsToolsOver.isMax)
         {
            
             max.GetComponent<Image>().sprite = Resources.Load<Sprite>("Title/3");

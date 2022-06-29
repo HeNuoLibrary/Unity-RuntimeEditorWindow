@@ -32,21 +32,38 @@ public class WindowsDrag:MonoBehaviour
     {
 #if !UNITY_EDITOR && PLATFORM_STANDALONE_WIN
         MinimumWindowSize.Set((int )minSize.x,(int )minSize.y);
+
+          WindowsTools.HideTitle();
         if (AutoMaxWindow)
         {
+        WindowsToolsOver.MaxWindows();
 
-         WindowsTools.HideTitle();
-         WindowsTools.SetMaxWindows();
+     
+        // WindowsTools.SetMaxWindows();
 
     }
         else { 
-         WindowsTools.HideTitle();
-         WindowsTools.SetNormalWindow();
+        WindowsToolsOver.MinWindows();
+       
+         //WindowsTools.SetNormalWindow();
 
         }
 
 
 #endif
+
+    }
+
+    private void Start()
+    {
+        if (AutoMaxWindow)
+        {
+#if !UNITY_EDITOR && PLATFORM_STANDALONE_WIN
+
+            WindowsToolsOver.MaxWindows();
+#endif
+
+        }
     }
 
     private void OnEnable()
@@ -68,7 +85,6 @@ public class WindowsDrag:MonoBehaviour
 
     private void WindowsMouseButtonsHandle(MouseButtons mouseButtons)
     {
-
         if (WindowsTools.IsMax)
         {
             return;

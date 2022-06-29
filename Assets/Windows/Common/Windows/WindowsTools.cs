@@ -3,6 +3,9 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using UnityEngine.Events;
+using System.Text;
+using System.IO;
+using Win32Api;
 /// <summary>
 /// 常用的一些窗口功能
 /// </summary>
@@ -109,6 +112,107 @@ public class WindowsTools
     /// <returns></returns>
     [DllImport("user32.dll")]
     public static extern bool ShowWindow(System.IntPtr hwnd, int nCmdShow);
+
+
+    #region  设置任务栏
+
+    public const int SW_RESTORE = 9;//显示任务栏
+    public const int SW_HIDE = 0;//隐藏任务栏
+    /// <summary>
+    /// 显示任务栏
+    /// </summary>
+    /// <param name="hWnd"></param>
+    /// <param name="nCmdShow"></param>
+    /// <returns></returns>
+
+    [DllImport("user32.dll")]
+    public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
+    public static extern IntPtr ExtractAssociatedIcon(IntPtr hInst, StringBuilder lpIconPath,out ushort lpiIcon);
+
+
+
+    public static int NIM_ADD= 0x00;//添加一个任务栏图标
+
+    public static int NIM_MODIFY = 0x01;//修改任务栏内容
+    public static int NIM_DELETE = 0x02;//删除任务栏图标
+
+    //创建任务栏图标
+    [DllImport("shell32.dll", EntryPoint = "Shell_NotifyIcon", CharSet = CharSet.Unicode)]
+    private static extern bool Shell_NotifyIcon(int dwMessage, ref NOTIFYICONDATA lpData);
+
+    // 注意一定要指定字符集为Unicode，否则气泡内容不能支持中文
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    private struct NOTIFYICONDATA
+    {
+        internal int cbSize;
+        internal IntPtr hwnd;
+        internal int uID;
+        internal int uFlags;
+        internal int uCallbackMessage;
+        internal IntPtr hIcon;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        internal string szTip;
+        internal int dwState; // 这里往下几个是 5.0 的精华
+        internal int dwStateMask;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        internal string szInfo;
+        internal int uTimeoutAndVersion;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        internal string szInfoTitle;
+        internal int dwInfoFlags;
+    }
+
+    /// <summary>
+    /// 创建任务栏菜单
+    /// </summary>
+    [Flags]
+    public enum MenuFlags : uint
+    {
+        MF_STRING = 0,
+        MF_BYPOSITION = 0x400,
+        MF_SEPARATOR = 0x800,
+        MF_REMOVE = 0x1000,
+    }
+
+    // http://www.pinvoke.net/default.aspx/user32/CreatePopupMenu.html
+    [DllImport("user32")]
+    public static extern IntPtr CreatePopupMenu();
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    public static extern bool AppendMenu(IntPtr hMenu, MenuFlags uFlags, uint uIDNewItem, string lpNewItem);
+
+
+    ///  弹出任务栏菜单
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool SetForegroundWindow(IntPtr hWnd);
+    [DllImport("user32.dll")]
+    public static extern bool TrackPopupMenuEx(IntPtr hmenu, uint fuFlags, int x, int y,
+       IntPtr hwnd, IntPtr lptpm);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool DestroyMenu(IntPtr hMenu);
+
+
+   
+
+
+    #endregion
+
+    
+
+//引用方法
+[DllImport("user32.dll", SetLastError = true)]
+    private static extern int GetSystemMetrics(int nIndex);
+
+
+    public static int  GetSystemMetricsByIndex(int nIndex) {
+
+        return GetSystemMetrics(nIndex);
+    }
+
 
     //查找当前应用对应的窗口句柄
     /// <summary>
@@ -224,6 +328,7 @@ public class WindowsTools
 
 
 
+
     private static IntPtr myWindows;
     /// <summary>
     /// 获取当前应用的窗口句柄
@@ -318,7 +423,19 @@ public class WindowsTools
     public static void SetMaxWindows()
     {
        
-        ShowWindow(GetForegroundWindow(), SW_MAXIMIZE);
+        //ShowWindow(GetForegroundWindow(), SW_MAXIMIZE);
+
+        int width = WindowsTools.GetSystemMetricsByIndex(0);
+        int height = WindowsTools.GetSystemMetricsByIndex(1);
+
+        int taskHeight = WindowsTools.GetSystemMetricsByIndex(4);
+
+        Rect rect = new Rect();
+        rect.width = width;
+        rect.height = height - taskHeight;
+
+
+        WindowsTools.SetWindowPos(rect);
 
     }
     /// <summary>
