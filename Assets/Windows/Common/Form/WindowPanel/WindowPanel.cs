@@ -481,6 +481,7 @@ public class WindowPanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
 		if (node.brotherNode != null)
 		{
+			Debug.LogError("兄弟节点填充父节点");
 			node.brotherNode.FullParentNode();
 
 		}

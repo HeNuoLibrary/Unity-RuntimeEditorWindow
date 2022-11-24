@@ -295,6 +295,9 @@ public class Node : MonoBehaviour
 		rect.position = parentNode.rectTransform.position;
 		rect.size = parentNode.rectTransform.rect.size;
 		UIUtil.SetRectTransformSizeWithCurrentAnchors(rectTransform, rect.size, rect.position);
+		Vector3 pos = rectTransform.localPosition;
+		pos.z = 0;
+		rectTransform.localPosition = pos;
 
 		for (int i = transform.childCount - 1; i >= 0; i--)
 		{

@@ -53,6 +53,7 @@ public static class UIUtil
 			rectTransform.SetSizeWithCurrentAnchors(Axis.Horizontal, size.x);
 			rectTransform.SetSizeWithCurrentAnchors(Axis.Vertical, size.y);
 
+			
 			rectTransform.position = pos;
 			
 		}

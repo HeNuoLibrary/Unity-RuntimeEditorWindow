@@ -177,7 +177,10 @@ public class Lable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHan
             if (eventData.button == PointerEventData.InputButton.Right)
             {
                 LablePanel lablePanel = UIManager.Instance.Show<LablePanel>();
-                lablePanel.transform.position = eventData.position;
+
+                lablePanel.transform.position = UIUtil.GetScreenPointToWorldPointInRectangle(eventData.position, UIManager.Instance.UICanvas);
+
+                //lablePanel.transform.position = eventData.position;
                 lablePanel.Show(this);
             }
         }
